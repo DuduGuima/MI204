@@ -1,13 +1,14 @@
 import numpy as np
 import cv2
-
+print(cv2.__version__)
 from matplotlib import pyplot as plt
 
 #Lecture image en niveau de gris et conversion en float64
-img=np.float64(cv2.imread('./Image_Pairs/FlowerGarden2.png',0))
+img=np.float64(cv2.imread('../Image_Pairs/FlowerGarden2.png', 0))
 (h,w) = img.shape
 print("Dimension de l'image :",h,"lignes x",w,"colonnes")
 
+"""
 #Méthode directe
 t1 = cv2.getTickCount()
 img2 = cv2.copyMakeBorder(img,0,0,0,0,cv2.BORDER_REPLICATE)
@@ -23,25 +24,58 @@ cv2.imshow('Avec boucle python',img2.astype(np.uint8))
 #Convention OpenCV : une image de type entier est interprétée dans {0,...,255}
 cv2.waitKey(0)
 
-plt.subplot(121)
-plt.imshow(img2,cmap = 'gray')
-plt.title('Convolution - Méthode Directe')
+# plt.subplot(121)
+# plt.imshow(img2,cmap = 'gray')
+# plt.title('Convolution - Méthode Directe')
 
 #Méthode filter2D
 t1 = cv2.getTickCount()
 kernel = np.array([[0, -1, 0],[-1, 5, -1],[0, -1, 0]])
-img3 = cv2.filter2D(img,-1,kernel)
+# img3 = cv2.filter2D(img,-1,kernel)
+
 t2 = cv2.getTickCount()
 time = (t2 - t1)/ cv2.getTickFrequency()
 print("Méthode filter2D :",time,"s")
 
-cv2.imshow('Avec filter2D',img3/255.0)
+# cv2.imshow('Avec filter2D',img3/255.0)
+
 #Convention OpenCV : une image de type flottant est interprétée dans [0,1]
 cv2.waitKey(0)
 
-plt.subplot(122)
-plt.imshow(img3,cmap = 'gray',vmin = 0.0,vmax = 255.0)
-#Convention Matplotlib : par défaut, normalise l'histogramme !
-plt.title('Convolution - filter2D')
+# plt.subplot(122)
+# plt.imshow(img3,cmap = 'gray',vmin = 0.0,vmax = 255.0)
+# #Convention Matplotlib : par défaut, normalise l'histogramme !
+# plt.title('Convolution - filter2D')
+
+# plt.show()
+
+#Temp direct = 0,176 s
+#Temp filter2D = 0,0032 s 
+# Le kernel de convolution amplifie le valeur du pixel central par 5 et substrait le valeur de les pixel autour, le resultat de cette opération est de 
+# augmenter la differnece entre les valeur du pixeis adjacents. 
+"""
+
+# Derivatives with convolution
+kernel_derivX = np.array([[0, 0, 0],[-1, 0, 1],[0, 0, 0]])
+kernel_derivY = np.array([[0, -1, 0],[0, 0, 0],[0, 1, 0]])
+
+
+img_derivX = cv2.filter2D(img, -1, kernel_derivX)
+img_derivY = cv2.filter2D(img, -1, kernel_derivY)
+img_grad = np.sqrt(img_derivX**2 + img_derivY**2)
+
+#Pour afficher correctement les derivées on doit afficher les 
+
+plt.subplot(131)
+plt.imshow(np.abs(img_derivX), cmap='gray', vmin = 0.0, vmax = 255.0)
+plt.title('Conv deriv X')
+
+plt.subplot(132)
+plt.imshow(np.abs(img_derivY), cmap='gray', vmin = 0.0, vmax = 255.0)
+plt.title('Conv deriv Y')
+
+plt.subplot(133)
+plt.imshow(img_grad, cmap='gray', vmin = 0.0, vmax = 255.0)
+plt.title('Grad')
 
 plt.show()

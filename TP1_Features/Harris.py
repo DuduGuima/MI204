@@ -17,6 +17,13 @@ print("Shape de la matrice de autocorrelation: ",np.shape(Theta))
 # Mettre ici le calcul de la fonction d'intérêt de Harris
 
 #----------
+
+#we have to make sure all results are in the [0,255] range, so
+def adjust_values(f_result):
+
+    f_result_norm = 255*(f_result - f_result.min()) / (f_result.max() - f_result.min())
+    return f_result_norm
+
 #On commence en calculant la matrice de autocorrelation
 
 
@@ -30,7 +37,9 @@ def calc_auto(in_matrix,shape,alpha):
     kernel_dy=np.array([[0,-1,0],[0,0,0],[0,1,0]])
 
     matrix_dx=cv2.filter2D(in_matrix,-1,kernel_dx)
+    matrix_dx = adjust_values(matrix_dx)
     matrix_dy=cv2.filter2D(in_matrix,-1,kernel_dy)
+    matrix_dy=adjust_values(matrix_dy)
     
     #we also pad the original image's derivatives with 0s to make the loop
     matrix_copy_dx = cv2.copyMakeBorder(matrix_dx, 1, 1, 1, 1,cv2.BORDER_CONSTANT)
@@ -50,19 +59,14 @@ def calc_auto(in_matrix,shape,alpha):
     
 
     return f_result
-#we have to make sure all results are in the [0,255] range, so
-def adjust_values(f_result):
-
-    f_result_norm = 255*(f_result - f_result.min()) / (f_result.max() - f_result.min())
-    return f_result_norm
 
 
 Theta=calc_auto(Theta,(3,3),0.05)
-Theta = adjust_values(Theta)
+#Theta = adjust_values(Theta)
 print('Shape of Theta after operation: ',np.shape(Theta))
-neg_values = np.sum(np.int16(Theta < 0))
-high_values = np.sum(np.int16(Theta>255))
-print('AMount of wrong values(> 255 or <0) in Theta', neg_values+high_values)
+# neg_values = np.sum(np.int16(Theta < 0))
+# high_values = np.sum(np.int16(Theta>255))
+# print('AMount of wrong values(> 255 or <0) in Theta', neg_values+high_values)
 # Calcul des maxima locaux et seuillage
 Theta_maxloc = cv2.copyMakeBorder(Theta,0,0,0,0,cv2.BORDER_REPLICATE)
 d_maxloc = 3

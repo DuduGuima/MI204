@@ -4,7 +4,8 @@ import cv2
 from matplotlib import pyplot as plt
 
 #Lecture image en niveau de gris et conversion en float64
-img=np.float64(cv2.imread('D:\MI204\TP1_Features\Image_Pairs\Graffiti0.png',cv2.IMREAD_GRAYSCALE))
+img=np.float64(cv2.imread('Image_Pairs/Graffiti0.png',cv2.IMREAD_GRAYSCALE))
+print(np.shape(img))
 (h,w) = img.shape
 print("Dimension de l'image :",h,"lignes x",w,"colonnes")
 print("Type de l'image :",img.dtype)
@@ -47,17 +48,28 @@ def calc_auto(in_matrix,shape,alpha):
             auto_corr[1][0]=np.sum(np.multiply(window_dx,window_dy))
             f_result[i-1][j-1] =np.linalg.det(auto_corr) - alpha*(np.trace(auto_corr)**2)
     
+
     return f_result
+#we have to make sure all results are in the [0,255] range, so
+def adjust_values(f_result):
+
+    f_result_norm = 255*(f_result - f_result.min()) / (f_result.max() - f_result.min())
+    return f_result_norm
 
 
 Theta=calc_auto(Theta,(3,3),0.05)
+Theta = adjust_values(Theta)
 print('Shape of Theta after operation: ',np.shape(Theta))
+neg_values = np.sum(np.int16(Theta < 0))
+high_values = np.sum(np.int16(Theta>255))
+print('AMount of wrong values(> 255 or <0) in Theta', neg_values+high_values)
 # Calcul des maxima locaux et seuillage
 Theta_maxloc = cv2.copyMakeBorder(Theta,0,0,0,0,cv2.BORDER_REPLICATE)
 d_maxloc = 3
 seuil_relatif = 0.01
 se = np.ones((d_maxloc,d_maxloc),np.uint8)
 Theta_dil = cv2.dilate(Theta,se)
+#Theta_dil = adjust_values(Theta_dil)
 #Suppression des non-maxima-locaux
 Theta_maxloc[Theta < Theta_dil] = 0.0
 #On néglige également les valeurs trop faibles
@@ -80,9 +92,10 @@ se_croix = np.uint8([[1, 0, 0, 0, 1],
 [0, 1, 0, 1, 0],[1, 0, 0, 0, 1]])
 print('Shape of max_loc: ',np.shape(Theta_maxloc))
 Theta_ml_dil = cv2.dilate(Theta_maxloc,se_croix)
+#Theta_ml_dil = adjust_values(Theta_ml_dil)
 print('Shape of ml_dil: ',np.shape(Theta_ml_dil))
 #Relecture image pour affichage couleur
-Img_pts=cv2.imread('D:\MI204\TP1_Features\Image_Pairs\Graffiti0.png',cv2.IMREAD_COLOR)
+Img_pts=cv2.imread('Image_Pairs/Graffiti0.png',cv2.IMREAD_COLOR)
 (h,w,c) = Img_pts.shape
 print("Dimension de l'image :",h,"lignes x",w,"colonnes x",c,"canaux")
 print("Type de l'image :",Img_pts.dtype)

@@ -10,13 +10,13 @@ if len(sys.argv) != 2:
 else:
   img_bgr=cv2.imread(sys.argv[1],-1)
   if use_hsv:
-    img_bgr = cv2.cvtColor(img_bgr,cv2.COLOR_BGR2HSV)
+    img_bgr = cv2.cvtColor(img_bgr,cv2.COLOR_BGR2YCrCb)
 (h_img,w_img,c) = img_bgr.shape
 print("Dimension de l'image :",h_img,"lignes x",w_img,"colonnes x",c,"canaux")
 print("Type de l'image :",img_bgr.dtype)
 
 # Création des clusters (entraînement) sur une image
-Nb_classes = 6
+Nb_classes = 3
 img_samples = np.reshape(img_bgr,(-1,3))
 kmeans = KMeans(n_clusters=Nb_classes, random_state=0).fit(img_samples)
 # Affichage des centres de cluster 
@@ -27,7 +27,7 @@ print("Centres des clusters : ",kmeans.cluster_centers_)
 #img_test = cv2.imread('taj.jpg',-1)
 img_test = img_bgr
 if use_hsv:
-  img_test = cv2.cvtColor(img_test,cv2.COLOR_BGR2HSV)
+  img_test = cv2.cvtColor(img_test,cv2.COLOR_BGR2YCrCb)
 h_test,w_test,c_test = img_test.shape
 # Affichage des labels dans l'image d'entraînement
 img_labels = np.reshape(kmeans.labels_,(h_test,w_test))

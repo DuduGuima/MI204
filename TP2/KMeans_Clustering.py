@@ -3,12 +3,14 @@ import cv2
 import sys
 
 from sklearn.cluster import KMeans
-
+use_hsv = True
 if len(sys.argv) != 2:
   print ("Usage :",sys.argv[0],"<Image_in>")
   sys.exit(2)
 else:
   img_bgr=cv2.imread(sys.argv[1],-1)
+  if use_hsv:
+    img_bgr = cv2.cvtColor(img_bgr,cv2.COLOR_BGR2HSV)
 (h_img,w_img,c) = img_bgr.shape
 print("Dimension de l'image :",h_img,"lignes x",w_img,"colonnes x",c,"canaux")
 print("Type de l'image :",img_bgr.dtype)
@@ -21,7 +23,11 @@ kmeans = KMeans(n_clusters=Nb_classes, random_state=0).fit(img_samples)
 print("Centres des clusters : ",kmeans.cluster_centers_)
 
 #we now use it to colour our image
-img_test = cv2.imread('taj.jpg',-1)
+#img_test = cv2.imread('Images_Classif/INRA_Ble-Champignon/02-U2A.png',-1)
+#img_test = cv2.imread('taj.jpg',-1)
+img_test = img_bgr
+if use_hsv:
+  img_test = cv2.cvtColor(img_test,cv2.COLOR_BGR2HSV)
 h_test,w_test,c_test = img_test.shape
 # Affichage des labels dans l'image d'entraînement
 img_labels = np.reshape(kmeans.labels_,(h_test,w_test))

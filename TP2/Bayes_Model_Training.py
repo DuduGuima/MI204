@@ -170,7 +170,7 @@ clf.fit(data_features,data_labels)
 
 # Test the prediction on the whole image
 img_bgr = clone.copy()
-img_test=cv2.imread("taj.jpg",-1)
+img_test=cv2.imread("Images_Classif/Essex_Faces/94/ekavaz.19.jpg",-1)
 if use_hsv:
     img_test = cv2.cvtColor(img_test,cv2.COLOR_BGR2HSV)
 print("Size of test is: ", np.shape(img_test))

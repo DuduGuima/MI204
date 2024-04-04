@@ -3,20 +3,20 @@ import cv2
 import sys
 
 from sklearn.cluster import KMeans
-use_hsv = True
+use_ycc = True
 if len(sys.argv) != 2:
   print ("Usage :",sys.argv[0],"<Image_in>")
   sys.exit(2)
 else:
   img_bgr=cv2.imread(sys.argv[1],-1)
-  if use_hsv:
+  if use_ycc:
     img_bgr = cv2.cvtColor(img_bgr,cv2.COLOR_BGR2YCrCb)
 (h_img,w_img,c) = img_bgr.shape
 print("Dimension de l'image :",h_img,"lignes x",w_img,"colonnes x",c,"canaux")
 print("Type de l'image :",img_bgr.dtype)
 
 # Création des clusters (entraînement) sur une image
-Nb_classes = 3
+Nb_classes = 6
 img_samples = np.reshape(img_bgr,(-1,3))
 kmeans = KMeans(n_clusters=Nb_classes, random_state=0).fit(img_samples)
 # Affichage des centres de cluster 
@@ -26,17 +26,28 @@ print("Centres des clusters : ",kmeans.cluster_centers_)
 #img_test = cv2.imread('Images_Classif/INRA_Ble-Champignon/02-U2A.png',-1)
 #img_test = cv2.imread('taj.jpg',-1)
 img_test = img_bgr
-if use_hsv:
+if use_ycc:
   img_test = cv2.cvtColor(img_test,cv2.COLOR_BGR2YCrCb)
 h_test,w_test,c_test = img_test.shape
+print("Shape de l'image de test en entree:",img_test.shape)
+print("Shape de l'image de test :",np.shape(img_test[:,:,0]))
 # Affichage des labels dans l'image d'entraînement
+print("shape for the labels", np.shape(kmeans.labels_))
 img_labels = np.reshape(kmeans.labels_,(h_test,w_test))
-print("Type de l'image de label :",img_labels.dtype)
+#img_result_f = kmeans.predict(np.reshape(img_test,(-1,3)))
+#print("Type de l'image de label :",img_labels.dtype)
+#img_result_f = np.reshape(img_result_f,(h_test,w_test))
+
+#print("Shape de la prediction: ",np.shape(img_result_f))
+#print("Type de la prediction: ",img_result_f.dtype)
 # Normalisation pour affichage
+#img_results_display = (img_result_f*255)/(Nb_classes - 1)
+#print("Type du display: ",img_results_display.dtype)
 img_labels_display = (img_labels*255)/(Nb_classes - 1)
 img_labels_display = img_labels_display.astype(np.uint8)
 cv2.imshow("Clusters dans l'image (train)",img_labels_display)
-cv2.imwrite("result_kmeans.jpg", img_labels_display)
+#cv2.imshow("Clusters dans l'image (test)",img_results_display)
+#cv2.imwrite("result_kmeans.jpg", img_results_display)
 cv2.waitKey(0)
 
 # Pour tester sur une autre image : kmeans.predict(new_img_samples)

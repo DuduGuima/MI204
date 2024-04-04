@@ -104,7 +104,7 @@ while True:
         
         
         
-        print("Batch positif n°",num_pos,"enregistré !")
+        
     # if the 'n' key is pressed, record a positive batch sample
     if key == ord("y"):
 
@@ -112,7 +112,7 @@ while True:
 
         update_GBModel(r,c,w,h,5)
 
-        print("Batch négatif n°",num_neg,"enregistré !")    	
+        	
 
     # if the 'q' key is pressed, break from the loop
 
@@ -122,7 +122,7 @@ while True:
 
         update_GBModel(r,c,w,h,3)
 
-        print("Batch négatif n°",num_mgray,"enregistré !")    	
+           	
 
     # if the 'q' key is pressed, break from the loop
     
@@ -132,7 +132,7 @@ while True:
 
         update_GBModel(r,c,w,h,4)
 
-        print("Batch négatif n°",num_lgray,"enregistré !")    	
+         	
 
     if key == ord("e"):
 
@@ -140,7 +140,7 @@ while True:
 
         update_GBModel(r,c,w,h,2)
 
-        print("Batch négatif n°",num_hgray,"enregistré !") 
+        
 
     if key == ord("u"):
 
@@ -148,7 +148,7 @@ while True:
 
         update_GBModel(r,c,w,h,6)
 
-        print("Batch négatif n°",num_neg,"enregistré !")  
+        
     
     if key == ord("i"):
 
@@ -156,7 +156,7 @@ while True:
 
         update_GBModel(r,c,w,h,7)
 
-        print("Batch négatif n°",num_neg,"enregistré !")  
+        
 
     if key == ord("q"):
 
